@@ -58,3 +58,33 @@ print(first_cut)
 second_cut = first_cut[first_cut['distance'].between(138.465, 169.235)]
 print("Second cut : ")
 print(second_cut)
+
+
+plot.xlabel('ra')
+plot.ylabel('dec')
+plot.scatter(df["ra"], df["dec"], color='#808080',marker=markers.MarkerStyle('D', fillstyle='full').scaled(0.1))
+plot.scatter(second_cut["ra"], second_cut['dec'], color="#00008B",marker=markers.MarkerStyle('D', fillstyle='full').scaled(0.2))
+plot.show()
+
+third_cut = second_cut[second_cut["radial_velocity"].between(12.0, 18.0)]
+print("Third cut : ")
+print(third_cut)
+
+plot.xlabel('ra')
+plot.ylabel('dec')
+plot.scatter(df["ra"], df["dec"], color='#808080',marker=markers.MarkerStyle('D', fillstyle='full').scaled(0.1))
+plot.scatter(third_cut["ra"], third_cut['dec'], color="#00008B",marker=markers.MarkerStyle('D', fillstyle='full').scaled(0.2))
+plot.show()
+
+third_cut["pm"] = third_cut.apply(lambda row: sqrt((row["pmra"]/1000)**2 + (row["pmdec"]/1000)**2), axis=1)
+third_cut["vel_tan"] = third_cut.apply(lambda row: 4.74*(row["pm"])*(row["distance"]), axis=1)
+print("Third cut : ")
+print(third_cut[["pm", "vel_tan"]])
+
+print(f"Velocidad tangencial promedio: {third_cut['vel_tan'].mean()}")
+
+third_cut["velocity"] = third_cut.apply(lambda row: sqrt((row["vel_tan"])**2 + (row["radial_velocity"])**2), axis=1)
+
+print(f"Velocidad promedio: {third_cut['velocity'].mean()}")
+
+
